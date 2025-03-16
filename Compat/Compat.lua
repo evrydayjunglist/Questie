@@ -373,6 +373,10 @@ local function parseQuestObjective(text)
     return string.match(string.gsub(text, "\239\188\154", ":"), "(.*):%s*([%d]+)%s*/%s*([%d]+)")
 end
 
+local function sortObjectives(a, b)
+    return a.type ~= "event" -- "event" should always be last?
+end
+
 QuestieCompat.C_QuestLog = {
 	-- Returns info for the objectives of a quest. (https://wowpedia.fandom.com/wiki/API_C_QuestLog.GetQuestObjectives)
 	GetQuestObjectives = function(questID, questLogIndex)
@@ -401,6 +405,7 @@ QuestieCompat.C_QuestLog = {
 		    	    })
                 end
 		    end
+			table.sort(questObjectives, sortObjectives)
         end
 		return questObjectives -- can be empty for quests without objectives
 	end,
