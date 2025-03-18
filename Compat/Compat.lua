@@ -374,6 +374,7 @@ local function parseQuestObjective(text)
 end
 
 local function sortObjectives(a, b)
+	if not a then return end
     return a.type ~= "event" -- "event" should always be last?
 end
 
