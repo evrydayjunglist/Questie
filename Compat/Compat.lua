@@ -373,15 +373,10 @@ local function parseQuestObjective(text)
     return string.match(string.gsub(text, "\239\188\154", ":"), "(.*):%s*([%d]+)%s*/%s*([%d]+)")
 end
 
-local function sortObjectives(a, b)
-	if not a then return end
-    return a.type ~= "event" -- "event" should always be last?
-end
-
 QuestieCompat.C_QuestLog = {
 	-- Returns info for the objectives of a quest. (https://wowpedia.fandom.com/wiki/API_C_QuestLog.GetQuestObjectives)
 	GetQuestObjectives = function(questID, questLogIndex)
-		local questObjectives = {}
+		local questObjectives, objectiveIndex = {}, 1
         if questLogIndex then
 		    local numObjectives = GetNumQuestLeaderBoards(questLogIndex);
 		    for i = 1, numObjectives do
@@ -397,16 +392,17 @@ QuestieCompat.C_QuestLog = {
                         questObjectivesCache[objectiveName] = nil
                     end
 
-		    	    table.insert(questObjectives, {
+		    	    table.insert(questObjectives, objectiveIndex, {
 		    	    	text = description,
 		    	    	type = objectiveType,
 		    	    	finished = isCompleted and true or false,
 		    	    	numFulfilled = tonumber(numFulfilled) or (isCompleted and 1 or 0),
 		    	    	numRequired = tonumber(numRequired) or 1,
 		    	    })
+					-- "event" should always be last?
+					objectiveIndex = objectiveIndex + (objectiveType ~= "event" and 1 or 0)
                 end
 		    end
-			table.sort(questObjectives, sortObjectives)
         end
 		return questObjectives -- can be empty for quests without objectives
 	end,
