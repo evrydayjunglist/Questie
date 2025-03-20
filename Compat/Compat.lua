@@ -1471,13 +1471,29 @@ function QuestieCompat.GetSelectedSoundFile(typeSelected)
     return QuestieCompat.orig_GetSelectedSoundFile(typeSelected):gsub("[^.]+$", "wav")
 end
 
+QuestieCompat.isReloadingUi = false
+function QuestieCompat.OnReloadUi(command)
+	command = command or "reloadui"
+	if (command == "reloadui") then
+		Questie.db.profile.isInitialLogin = false
+		QuestieCompat.isReloadingUi = true
+	end
+end
+
 -- disable builtin quest progress tooltips, re-enable on logout
 function QuestieCompat:ToggleQuestTrackingTooltips(event)
     local value = tostring(event:find("LOGOUT") and 1 or 0)
     SetCVar("showQuestTrackingTooltips", value)
 end
 QuestieCompat.PLAYER_LOGIN = QuestieCompat.ToggleQuestTrackingTooltips
-QuestieCompat.PLAYER_LOGOUT = QuestieCompat.ToggleQuestTrackingTooltips
+
+function QuestieCompat:PLAYER_LOGOUT(event)
+	if not QuestieCompat.isReloadingUi then
+		QuestieCompat:ToggleQuestTrackingTooltips(event)
+		
+		Questie.db.profile.isInitialLogin = true
+	end
+end
 
 local townsfolk_texturemap = {
     ["Ammo"] = "Interface\\Icons\\inv_ammo_arrow_02",
@@ -1660,6 +1676,7 @@ function QuestieCompat:ADDON_LOADED(event, addon)
 
     QuestieCompat.Merge(Questie.db, {
         profile = {
+			isInitialLogin = true,
             initDelay = 0.03,
             useWotlkMapData = false,
             resetDailyQuests = true,
@@ -1727,6 +1744,9 @@ function QuestieCompat:ADDON_LOADED(event, addon)
     hooksecurefunc(QuestEventHandler, "RegisterEvents", QuestieCompat.QuestEventHandler_RegisterEvents)
     hooksecurefunc(TrackerLinePool, "Initialize", QuestieCompat.QuestieTracker_Initialize)
     hooksecurefunc(QuestieQuest, "ToggleNotes", QuestieCompat.HBDPins.UpdateWorldMap)
+	hooksecurefunc("ReloadUI", QuestieCompat.OnReloadUi)
+	hooksecurefunc("ConsoleExec", QuestieCompat.OnReloadUi)
+
 
     local Mapster = LibStub("AceAddon-3.0"):GetAddon("Mapster", true)
     if Mapster and Mapster.RefreshQuestObjectivesDisplay then

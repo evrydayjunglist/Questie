@@ -250,7 +250,7 @@ QuestieInit.Stages[2] = function()
     coYield()
     QuestieJourney:Initialize()
 
-    --[[local keepWaiting = true
+    local keepWaiting = true
     -- We had users reporting that a quest did not reach a valid state in the game cache.
     -- In this case we still need to continue the initialization process, even though a specific quest might be bugged
     C_Timer.After(3, function()
@@ -264,7 +264,7 @@ QuestieInit.Stages[2] = function()
     while (not QuestieValidateGameCache:IsCacheGood()) and keepWaiting do
         coYield()
     end
-    keepWaiting = false]]
+    keepWaiting = false
 end
 
 QuestieInit.Stages[3] = function() -- run as a coroutine
