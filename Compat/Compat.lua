@@ -387,7 +387,7 @@ QuestieCompat.C_QuestLog = {
                     -- GetQuestLogLeaderBoard randomly returns incorrect objective information.
                     -- Parsing the UI_INFO_MESSAGE event for the correct numFulfilled value seems like the solution.
                     local fulfilled = questObjectivesCache[objectiveName]
-                    if fulfilled then
+                    if fulfilled and (not isCompleted) then
                         numFulfilled = fulfilled
                         questObjectivesCache[objectiveName] = nil
                     end
