@@ -134,6 +134,18 @@ local raceLocales = {
         ["esES"] = "Elfo de sangre",
         ["frFR"] = "Elfe de sang",
     },
+    ["Worgen"] = {
+        ["ptBR"] = "Worgen",
+        ["ruRU"] = "Ворген",
+        ["deDE"] = "Worgen",
+        ["koKR"] = "늑대인간",
+        ["esMX"] = "Huargen",
+        ["enUS"] = true,
+        ["zhCN"] = "狼人",
+        ["zhTW"] = "狼人",
+        ["esES"] = "Huargen",
+        ["frFR"] = "Worgen",
+    },
 }
 
 for k, v in pairs(raceLocales) do
